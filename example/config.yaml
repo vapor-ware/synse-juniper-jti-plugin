@@ -1,0 +1,17 @@
+version: 3
+debug: true
+network:
+  type: tcp
+  address: ':5010'
+settings:
+  mode: parallel
+  read:
+    interval: 1s
+  write:
+    enabled: false
+  cache:
+    enabled: true
+    ttl: 5m
+dynamicRegistration:
+  config:
+    - address: udp://0.0.0.0:5566

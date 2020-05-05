@@ -1,0 +1,58 @@
+# For details, see the GoReleaser documentation at http://goreleaser.com
+project_name: synse-juniper-jti-plugin
+before:
+  hooks:
+    - go mod download
+builds:
+  - env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -w
+      - -X github.com/vapor-ware/synse-sdk/sdk.BuildDate={{ .Date }}
+      - -X github.com/vapor-ware/synse-sdk/sdk.GitCommit={{ .ShortCommit }}
+      - -X github.com/vapor-ware/synse-sdk/sdk.GitTag={{ .Tag }}
+      - -X github.com/vapor-ware/synse-sdk/sdk.GoVersion={{ .Env.GOLANG_VERSION }}
+      - -X github.com/vapor-ware/synse-sdk/sdk.PluginVersion={{ .Version }}
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+archives:
+  - format: tar.gz
+checksum:
+  name_template: 'checksums-{{ .Tag }}.txt'
+release:
+  github:
+    owner: vapor-ware
+    name: synse-juniper-jti-plugin
+  draft: false
+  prerelease: auto
+  name_template: "{{ .Version }}"
+dockers:
+  -
+    goos: linux
+    goarch: amd64
+    binaries:
+      - synse-juniper-jti-plugin
+    image_templates:
+      - vaporio/juniper-jti-plugin:{{ .Tag }}
+      - vaporio/juniper-jti-plugin:{{ .Major }}
+      - vaporio/juniper-jti-plugin:{{ .Major }}.{{ .Minor }}
+      - vaporio/juniper-jti-plugin:latest
+    build_flag_templates:
+      - "--label=org.label-schema.version={{ .Version }}"
+      - "--label=org.label-schema.build-date={{ .Date }}"
+      - "--label=org.label-schema.vcs-ref={{ .ShortCommit }}"
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^bump:'
+      - '^deps:'
+      - '^docs:'
+      - '^test:'
+      - '^typo:'
+      - '^wip:'
