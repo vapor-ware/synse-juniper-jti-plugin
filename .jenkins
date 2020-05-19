@@ -1,0 +1,78 @@
+#!/usr/bin/env groovy
+
+pipeline {
+
+  agent {
+    label 'golang-alpha'
+  }
+
+  environment {
+    IMAGE_NAME = 'vaporio/juniper-jti-plugin'
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+
+    stage('Checks') {
+      parallel {
+
+        stage('Lint') {
+          steps {
+            container('golang') {
+              sh 'golint -set_exit_status ./pkg/...'
+            }
+          }
+        }
+
+        stage('Test') {
+          steps {
+            container('golang') {
+              sh 'go test -cover -race ./pkg/...'
+            }
+          }
+        }
+
+        stage('Snapshot Build') {
+          steps {
+            container('golang') {
+              sh 'goreleaser release --debug --snapshot --skip-publish --rm-dist'
+            }
+          }
+        }
+      }
+    }
+
+    stage('Publish Latest') {
+      when {
+        branch 'master'
+      }
+      steps {
+        container('golang') {
+          withDockerRegistry(registry: [credentialsId: 'vio-docker-hub']) {
+            sh 'docker push ${IMAGE_NAME}:latest'
+          }
+        }
+      }
+    }
+
+    stage('Tagged Release') {
+      when {
+        buildingTag()
+      }
+      environment {
+        GITHUB_TOKEN = credentials('vio-bot-gh-token')
+      }
+      steps {
+        container('golang') {
+          withDockerRegistry(registry: [credentialsId: 'vio-docker-hub']) {
+            sh 'goreleaser release --debug --rm-dist'
+          }
+        }
+      }
+    }
+  }
+}
