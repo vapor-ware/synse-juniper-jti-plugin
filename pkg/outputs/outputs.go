@@ -53,6 +53,17 @@ var MegabitPerSecond = output.Output{
 	},
 }
 
+// Milliamperes is a reading output which describes an electical current as measures in thousandths
+// of an Ampere (milli-amperes).
+var Milliamperes = output.Output{
+	Name: "milliampere",
+	Type: "current",
+	Unit: &output.Unit{
+		Name:   "milliamperes",
+		Symbol: "mA",
+	},
+}
+
 // PacketsCounter is a reading output which describes a count of packets.
 // This is not associated with a time, so is not a rate -- merely just a
 // total count of packets.

@@ -145,17 +145,16 @@ func (ctx *OpticsContext) MakeReadings(info *optics.OpticsInfos) ([]*output.Read
 		outputs.DecibelMilliwatts.MakeReading(stats.GetLaserRxPowerLowWarningThresholdDbm()).WithContext(map[string]string{
 			"metric": "laser_rx_power_low_warning_threshold_dbm",
 		}),
-		// FIXME (etd): I don't know what these units should be, so just sticking with "number" for now.
-		output.Number.MakeReading(stats.GetLaserBiasCurrentHighAlarmThreshold()).WithContext(map[string]string{
+		outputs.Milliamperes.MakeReading(stats.GetLaserBiasCurrentHighAlarmThreshold()).WithContext(map[string]string{
 			"metric": "laser_bias_current_high_alarm_threshold",
 		}),
-		output.Number.MakeReading(stats.GetLaserBiasCurrentLowAlarmThreshold()).WithContext(map[string]string{
+		outputs.Milliamperes.MakeReading(stats.GetLaserBiasCurrentLowAlarmThreshold()).WithContext(map[string]string{
 			"metric": "laser_bias_current_low_alarm_threshold",
 		}),
-		output.Number.MakeReading(stats.GetLaserBiasCurrentHighWarningThreshold()).WithContext(map[string]string{
+		outputs.Milliamperes.MakeReading(stats.GetLaserBiasCurrentHighWarningThreshold()).WithContext(map[string]string{
 			"metric": "laser_bias_current_high_warning_threshold",
 		}),
-		output.Number.MakeReading(stats.GetLaserBiasCurrentLowWarningThreshold()).WithContext(map[string]string{
+		outputs.Milliamperes.MakeReading(stats.GetLaserBiasCurrentLowWarningThreshold()).WithContext(map[string]string{
 			"metric": "laser_bias_current_low_warning_threshold",
 		}),
 		outputs.Boolean.MakeReading(stats.GetModuleTempHighAlarm()).WithContext(map[string]string{
@@ -189,8 +188,7 @@ func (ctx *OpticsContext) MakeReadings(info *optics.OpticsInfos) ([]*output.Read
 				"lane_number": laneNumber,
 				"metric":      "lane_laser_receiver_power_dbm",
 			}),
-			// TODO (etd): don't know the unit, so just using Number here
-			output.Number.MakeReading(stat.GetLaneLaserBiasCurrent()).WithContext(map[string]string{
+			outputs.Milliamperes.MakeReading(stat.GetLaneLaserBiasCurrent()).WithContext(map[string]string{
 				"lane_number": laneNumber,
 				"metric":      "lane_laser_bias_current",
 			}),
