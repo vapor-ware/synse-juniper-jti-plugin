@@ -36,6 +36,7 @@ func MakePlugin() (*sdk.Plugin, error) {
 		&outputs.BytesPerSecond,
 		&outputs.DecibelMilliwatts,
 		&outputs.MegabitPerSecond,
+		&outputs.Milliamperes,
 		&outputs.PacketsCounter,
 		&outputs.PacketsPerSecond,
 		&outputs.TimeTicks,
