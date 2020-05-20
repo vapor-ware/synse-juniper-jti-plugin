@@ -14,4 +14,5 @@ type DeviceManager interface {
 	GetDevice(string) *sdk.Device
 	NewDevice(*config.DeviceProto, *config.DeviceInstance) (*sdk.Device, error)
 	RegisterDevice(*sdk.Device) error
+	GenerateDeviceID(*sdk.Device) string
 }

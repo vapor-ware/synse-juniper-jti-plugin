@@ -32,3 +32,8 @@ func (dm *pluginDeviceManager) NewDevice(proto *config.DeviceProto, inst *config
 func (dm *pluginDeviceManager) RegisterDevice(device *sdk.Device) error {
 	return dm.plugin.AddDevice(device)
 }
+
+// GenerateDeviceID generates the deterministic ID for the device.
+func (dm *pluginDeviceManager) GenerateDeviceID(device *sdk.Device) string {
+	return dm.plugin.GenerateDeviceID(device)
+}
