@@ -43,3 +43,8 @@ func (dm *StubDeviceManager) RegisterDevice(device *sdk.Device) error {
 	dm.cache[device.GetID()] = device
 	return nil
 }
+
+// GenerateDeviceID generates a fake device ID for the given device.
+func (dm *StubDeviceManager) GenerateDeviceID(device *sdk.Device) string {
+	return "test-device-id"
+}

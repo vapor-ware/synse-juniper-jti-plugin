@@ -7,7 +7,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/vapor-ware/synse-juniper-jti-plugin/pkg/manager"
 	"github.com/vapor-ware/synse-juniper-jti-plugin/pkg/protocol/jti"
-	"github.com/vapor-ware/synse-sdk/sdk"
 	"github.com/vapor-ware/synse-sdk/sdk/config"
 )
 
@@ -143,30 +142,32 @@ func (server *JtiUDPServer) Listen() error {
 				return err
 			}
 
-			// Attempt to register the device. If this fails with an ErrDeviceIDExists,
-			// then the device has already been registered. It is probably better to check
-			// if the device exists first via a Get, but because of how the device construction
-			// is implemented, the internal ID is not generated right away. There may need
-			// to be updates to the SDK to make this flow a bit better and more user friendly.
-			if err := server.deviceManager.RegisterDevice(dev); err != nil {
-				if err != sdk.ErrDeviceIDExists {
+			// Attempt to get the device. If the device does not yet exist, register it
+			// with the plugin.
+			deviceID := server.deviceManager.GenerateDeviceID(dev)
+			device := server.deviceManager.GetDevice(deviceID)
+			if device == nil {
+				log.WithFields(log.Fields{
+					"id": deviceID,
+				}).Info("[jti] device with ID does not exist - creating new device")
+				if err := server.deviceManager.RegisterDevice(dev); err != nil {
 					log.WithFields(log.Fields{
 						"err":  err,
-						"type": dev.Type,
+						"id":   deviceID,
 						"info": dev.Info,
 						"ctx":  dev.Context,
-					}).Error("[jti] failed to register new  device")
+						"type": dev.Type,
+					}).Error("[jti] failed to register new device")
 					return err
 				}
-			} else {
-				log.WithFields(log.Fields{
-					"type": dev.Type,
-					"info": dev.Info,
-					"ctx":  dev.Context,
-					"tags": dev.Tags,
-				}).Info("[jti] successfully registered new device")
+
+				// Since the device is now registered, we can use the Device reference
+				// to add the readings to.
+				device = dev
 			}
-			dev.Data[ReadingKey] = d.Readings
+
+			// Add the readings to the device data.
+			device.Data[ReadingKey] = d.Readings
 		}
 	}
 
