@@ -123,10 +123,9 @@ func TestPortContext_MakeDeviceInfo(t *testing.T) {
 	assert.Equal(t, "test interface string", info.Info)
 	assert.Equal(t, []string{"vapor/networking:interface"}, info.Tags)
 	assert.Equal(t, map[string]string{
-		"component_id":   "2",
-		"name":           "string",
+		"interface_name": "string",
 		"system_id":      "test",
-		"sensor_name":    "sensor",
+		"metric_type":    "network",
 		"parent_ae_name": "string",
 	}, info.Context)
 	assert.Equal(t, map[string]string{

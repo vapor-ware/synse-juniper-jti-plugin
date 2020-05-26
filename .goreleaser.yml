@@ -51,8 +51,8 @@ changelog:
   filters:
     exclude:
       - '^bump:'
+      - '^cleanup:'
       - '^deps:'
       - '^docs:'
-      - '^test:'
       - '^typo:'
       - '^wip:'

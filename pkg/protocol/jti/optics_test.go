@@ -101,10 +101,9 @@ func TestOpticsContext_MakeDeviceInfo(t *testing.T) {
 	assert.Equal(t, "test interface string", info.Info)
 	assert.Equal(t, []string{"vapor/networking:interface"}, info.Tags)
 	assert.Equal(t, map[string]string{
-		"component_id": "2",
-		"name":         "string",
-		"system_id":    "test",
-		"sensor_name":  "sensor",
+		"interface_name": "string",
+		"system_id":      "test",
+		"metric_type":    "network",
 	}, info.Context)
 	assert.Equal(t, map[string]string{
 		"sys":  "test",

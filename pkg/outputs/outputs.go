@@ -25,7 +25,7 @@ var BytesCounter = output.Output{
 // BytesPerSecond is a reading output which describes a rate of bytes over a second.
 var BytesPerSecond = output.Output{
 	Name: "bytes-per-second",
-	Type: "rate",
+	Type: "throughput",
 	Unit: &output.Unit{
 		Name:   "bytes per second",
 		Symbol: "bytes/s",
@@ -46,14 +46,14 @@ var DecibelMilliwatts = output.Output{
 // MegabitPerSecond is a reading output which describes a rate of 1,000,000 bits over a second.
 var MegabitPerSecond = output.Output{
 	Name: "megabit-per-second",
-	Type: "rate",
+	Type: "throughput",
 	Unit: &output.Unit{
 		Name:   "Megabits per second",
 		Symbol: "Mbit/s",
 	},
 }
 
-// Milliamperes is a reading output which describes an electical current as measures in thousandths
+// Milliamperes is a reading output which describes an electrical current as measured in thousandths
 // of an Ampere (milli-amperes).
 var Milliamperes = output.Output{
 	Name: "milliampere",
@@ -78,8 +78,8 @@ var PacketsCounter = output.Output{
 
 // PacketsPerSecond is a reading output which describes a rate of packets over a second.
 var PacketsPerSecond = output.Output{
-	Name: "packets-per-sec",
-	Type: "rate",
+	Name: "packets-per-second",
+	Type: "throughput",
 	Unit: &output.Unit{
 		Name:   "packets per second",
 		Symbol: "pkts/s",
