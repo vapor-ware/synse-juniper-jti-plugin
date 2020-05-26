@@ -1,0 +1,36 @@
+#
+# docker-compose.yaml
+#
+# A simple compose file to run a dockerized Juniper JTI plugin
+# instance with Synse Server, both in debug mode.
+#
+# To run:
+#    docker-compose up -d
+#
+
+version: '3'
+services:
+  synse-server:
+    container_name: synse-server
+    image: vaporio/synse-server
+    ports:
+      - '5000:5000'
+    links:
+      - juniper-jti
+    environment:
+      SYNSE_LOGGING: debug
+      SYNSE_PLUGIN_TCP: juniper-jti:5001
+      SYNSE_METRICS_ENABLED: 'true'
+
+  juniper-jti:
+    container_name: juniper-jti
+    image: vaporio/juniper-jti-plugin
+    command: ['--debug']
+    ports:
+      - '5010:5010'     # gRPC API (HTTP)
+      - '2112:2112'     # app metrics (HTTP)
+      - '5566:5566/udp' # UDP server
+    volumes:
+      - ./example/config.yaml:/etc/synse/plugin/config/config.yaml
+    environment:
+      PLUGIN_METRICS_ENABLED: 'true'

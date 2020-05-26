@@ -82,10 +82,9 @@ func (ctx *PortContext) MakeDeviceInfo(iface *port.InterfaceInfos) (*DeviceInfo,
 			"vapor/networking:interface",
 		},
 		Context: map[string]string{
-			"component_id":   fmt.Sprint(ctx.ComponentID),
-			"name":           ifaceName,
+			"interface_name": ifaceName,
 			"system_id":      ctx.SystemID,
-			"sensor_name":    ctx.SensorName,
+			"metric_type":    "network",
 			"parent_ae_name": iface.GetParentAeName(),
 		},
 		IDComponents: map[string]string{
@@ -100,9 +99,6 @@ func (ctx *PortContext) MakeDeviceInfo(iface *port.InterfaceInfos) (*DeviceInfo,
 // MakeReadings creates device readings for an InterfaceInfos message. The message contains many data
 // points, all of which are translated into Synse readings.
 func (ctx *PortContext) MakeReadings(iface *port.InterfaceInfos) ([]*output.Reading, error) {
-	// FIXME (etd): This is a first pass at what interface reading data could look like. This
-	//   is still a work in progress and should be reviewed + refined.
-
 	// TODO (etd): maybe there is a more programmatic way of being able to construct these? e.g.
 	// 	 via reflection?
 
@@ -119,12 +115,12 @@ func (ctx *PortContext) MakeReadings(iface *port.InterfaceInfos) ([]*output.Read
 		}),
 
 		// -*- Bytes per Second Outputs -*-
-		outputs.PacketsPerSecond.MakeReading(iface.IngressStats.GetIf_1SecOctets()).WithContext(map[string]string{
+		outputs.BytesPerSecond.MakeReading(iface.IngressStats.GetIf_1SecOctets()).WithContext(map[string]string{
 			"direction": "ingress",
 			"metric":    "if_1sec_octets",
 		}),
 
-		outputs.PacketsPerSecond.MakeReading(iface.EgressStats.GetIf_1SecOctets()).WithContext(map[string]string{
+		outputs.BytesPerSecond.MakeReading(iface.EgressStats.GetIf_1SecOctets()).WithContext(map[string]string{
 			"direction": "egress",
 			"metric":    "if_1sec_octets",
 		}),

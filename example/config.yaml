@@ -1,3 +1,11 @@
+#
+# config.yaml
+#
+# This is an example Synse Plugin configuration for the Juniper JTI Plugin.
+# It is not intended to be used as a default configuration for the plugin,
+# but can serve as a reference for configuring your own config.
+#
+
 version: 3
 debug: true
 network:
@@ -6,8 +14,12 @@ network:
 settings:
   mode: parallel
   read:
+    # This interval may be tuned to be closer to the interval at which
+    # configured Juniper equipment reports data over the JTI stream.
     interval: 1s
   write:
+    enabled: false
+  listen:
     enabled: false
   cache:
     enabled: true

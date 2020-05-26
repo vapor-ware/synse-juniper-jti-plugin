@@ -83,10 +83,9 @@ func (ctx *OpticsContext) MakeDeviceInfo(info *optics.OpticsInfos) (*DeviceInfo,
 			"vapor/networking:interface",
 		},
 		Context: map[string]string{
-			"component_id": fmt.Sprint(ctx.ComponentID),
-			"name":         ifaceName,
-			"system_id":    ctx.SystemID,
-			"sensor_name":  ctx.SensorName,
+			"interface_name": ifaceName,
+			"system_id":      ctx.SystemID,
+			"metric_type":    "network",
 		},
 		IDComponents: map[string]string{
 			"sys":  ctx.SystemID,
