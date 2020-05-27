@@ -3,6 +3,7 @@ project_name: synse-juniper-jti-plugin
 before:
   hooks:
     - go mod download
+    - rm -rf dist
 builds:
   - env:
       - CGO_ENABLED=0
