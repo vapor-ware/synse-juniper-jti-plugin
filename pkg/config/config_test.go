@@ -15,6 +15,22 @@ func TestLoad_Ok(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, cfg)
 	assert.Equal(t, "localhost", cfg.Address)
+	assert.Empty(t, cfg.Context)
+}
+
+func TestLoad_Ok2(t *testing.T) {
+	raw := map[string]interface{}{
+		"address": "udp://1.2.3.4:30000",
+		"context": map[string]string{
+			"foo": "bar",
+		},
+	}
+
+	cfg, err := Load(raw)
+	assert.NoError(t, err)
+	assert.NotNil(t, cfg)
+	assert.Equal(t, "udp://1.2.3.4:30000", cfg.Address)
+	assert.Equal(t, map[string]string{"foo": "bar"}, cfg.Context)
 }
 
 func TestLoad_Error(t *testing.T) {

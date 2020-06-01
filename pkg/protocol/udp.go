@@ -5,8 +5,10 @@ import (
 	"strings"
 
 	log "github.com/sirupsen/logrus"
+	cfg "github.com/vapor-ware/synse-juniper-jti-plugin/pkg/config"
 	"github.com/vapor-ware/synse-juniper-jti-plugin/pkg/manager"
 	"github.com/vapor-ware/synse-juniper-jti-plugin/pkg/protocol/jti"
+	"github.com/vapor-ware/synse-sdk/sdk"
 	"github.com/vapor-ware/synse-sdk/sdk/config"
 )
 
@@ -18,8 +20,9 @@ const (
 
 // JtiUDPServer is the UDP server for collecting streamed JTI data over UDP.
 type JtiUDPServer struct {
-	Address    string
-	BufferSize uint64
+	Address       string
+	BufferSize    uint64
+	GlobalContext map[string]string
 
 	stopped       bool
 	conn          *net.UDPConn
@@ -28,9 +31,10 @@ type JtiUDPServer struct {
 }
 
 // NewJtiUDPServer creates a new instance of a JtiUDPServer.
-func NewJtiUDPServer(address string, deviceManager manager.DeviceManager) *JtiUDPServer {
+func NewJtiUDPServer(c *cfg.ServerConfig, deviceManager manager.DeviceManager) *JtiUDPServer {
 	return &JtiUDPServer{
-		Address:       address,
+		Address:       c.Address,
+		GlobalContext: c.Context,
 		BufferSize:    64 * 1024, // 64kb, max size of UDP datagram.
 		decoder:       jti.NewJTIDecoder(deviceManager),
 		deviceManager: deviceManager,
@@ -116,34 +120,15 @@ func (server *JtiUDPServer) Listen() error {
 		}
 
 		for _, d := range data {
-			dev, err := server.deviceManager.NewDevice(
-				&config.DeviceProto{
-					Type:    d.DeviceInfo.Type,
-					Context: d.DeviceInfo.Context,
-					Tags:    d.DeviceInfo.Tags,
-					Data: map[string]interface{}{
-						"id": d.DeviceInfo.IDComponents,
-					},
-					Handler: "jti",
-				},
-				&config.DeviceInstance{
-					Info: d.DeviceInfo.Info,
-				},
-			)
+			dev, err := server.newDeviceFromInfo(d.DeviceInfo)
 			if err != nil {
-				log.WithFields(log.Fields{
-					"err":  err,
-					"type": d.DeviceInfo.Type,
-					"info": d.DeviceInfo.Info,
-					"id":   d.DeviceInfo.IDComponents,
-					"ctx":  d.DeviceInfo.Context,
-					"tags": d.DeviceInfo.Tags,
-				}).Error("[jti] failed to create a new device")
 				return err
 			}
 
 			// Attempt to get the device. If the device does not yet exist, register it
 			// with the plugin.
+			// TODO (etd): The below could be broken out into a helper func (e.g. assignDeviceReadings)
+			//   in order to make this bit easier to test.
 			deviceID := server.deviceManager.GenerateDeviceID(dev)
 			device := server.deviceManager.GetDevice(deviceID)
 			if device == nil {
@@ -172,4 +157,44 @@ func (server *JtiUDPServer) Listen() error {
 	}
 
 	return nil
+}
+
+// newDeviceFromInfo is a utility function which creates a new SDK Device given a DeviceInfo
+// constructed while parsing data from an incoming JTI stream.
+//
+// It is important to note that the global context configured for the UDP server is applied
+// to the device at this level. The global context is defined at the prototype level, whereas
+// the context from the DeviceInfo is defined at the Instance level. The implication of this
+// is that when the SDK builds the device and merges the context, if the device info (instance
+// level) has keys which conflict with the global context (prototype level), the global level
+// will be overwritten.
+func (server *JtiUDPServer) newDeviceFromInfo(info *jti.DeviceInfo) (*sdk.Device, error) {
+	dev, err := server.deviceManager.NewDevice(
+		&config.DeviceProto{
+			Type:    info.Type,
+			Context: server.GlobalContext,
+			Tags:    info.Tags,
+			Data: map[string]interface{}{
+				"id": info.IDComponents,
+			},
+			Handler: "jti",
+		},
+		&config.DeviceInstance{
+			Info:    info.Info,
+			Context: info.Context,
+		},
+	)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"err":  err,
+			"type": info.Type,
+			"info": info.Info,
+			"id":   info.IDComponents,
+			"ctx":  info.Context,
+			"tags": info.Tags,
+		}).Error("[jti] failed to create a new device")
+		return nil, err
+	}
+
+	return dev, nil
 }
