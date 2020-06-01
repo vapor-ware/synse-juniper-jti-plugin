@@ -27,7 +27,7 @@ var RunBackgroundListener = sdk.PluginAction{
 		deviceManager := manager.NewPluginDeviceManager(p)
 
 		// Create the UDP server from the configuration.
-		svr := protocol.NewJtiUDPServer(serverConfig.Address, deviceManager)
+		svr := protocol.NewJtiUDPServer(serverConfig, deviceManager)
 
 		log.Info("[jti] starting UDP server listen")
 		go func() {

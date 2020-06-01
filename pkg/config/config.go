@@ -20,7 +20,11 @@ type ServerConfig struct {
 	// Address for the UDP server to listen on. This should be a string specifying
 	// the IP/hostname and port. The protocol prefix may be one of: "udp", "udp4",
 	// "udp6". If unspecified, "udp" is used.
-	Address string
+	Address string `yaml:"address,omitempty"`
+
+	// Contexts allow users to define arbitrary context key-value pairs to be globally
+	// applied to the devices for a plugin instance.
+	Context map[string]string `yaml:"context,omitempty"`
 }
 
 // Load the configuration for the plugin's UDP server which will listen for the

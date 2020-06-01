@@ -18,12 +18,14 @@ settings:
     # configured Juniper equipment reports data over the JTI stream.
     interval: 1s
   write:
-    enabled: false
+    disable: true
   listen:
-    enabled: false
+    disable: true
   cache:
     enabled: true
     ttl: 5m
 dynamicRegistration:
   config:
     - address: udp://0.0.0.0:5566
+      context:
+        site: ke1-test

@@ -64,6 +64,8 @@ As an example:
 dynamicRegistration:
   config:
   - address: udp://0.0.0.0:5566
+    context:
+      site: ke1-test
 ```
 
 Note that the IP address in this example is `0.0.0.0`. When running the plugin via a Docker
@@ -77,6 +79,7 @@ If no default is specified (`-`), the field is required.
 | Field   | Description | Default |
 | ------- | ----------- | ------- |
 | address | The protocol/address/port for the UDP server to listen for incoming telemetry data. The protocol may be one of: [`udp`, `udp4`, `udp6`]. When running in a docker container, the address should be `0.0.0.0`. | `-` |
+| context | Additional key-value pairs to be globally applied to all device contexts for devices managed by a plugin instance. | `{}` |
 
 ### Reading Outputs
 

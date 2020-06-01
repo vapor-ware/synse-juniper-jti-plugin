@@ -32,7 +32,7 @@ func (dm *StubDeviceManager) NewDevice(proto *config.DeviceProto, inst *config.D
 	if dm.withError {
 		return nil, fmt.Errorf("error creating stub device")
 	}
-	return &sdk.Device{}, nil
+	return sdk.NewDeviceFromConfig(proto, inst, map[string]*sdk.DeviceHandler{"jti": {}})
 }
 
 // RegisterDevice registers an SDK Device.
