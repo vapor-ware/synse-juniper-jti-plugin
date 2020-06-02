@@ -52,8 +52,10 @@ func (decoder *JuniperJTIDecoder) Decode(buffer []byte) ([]*IntermediaryDataCont
 		switch jns := jnsIface.(type) {
 		case *telemetry_top.JuniperNetworksSensors:
 
-			// == OPTICS ==
 			if proto.HasExtension(jns, optics.E_JnprOpticsExt) {
+				/*
+					OPTICS
+				*/
 				opticsIface, err := proto.GetExtension(jns, optics.E_JnprOpticsExt)
 				if err != nil {
 					log.WithError(err).Error("[jti] failed to get extension")
@@ -71,10 +73,11 @@ func (decoder *JuniperJTIDecoder) Decode(buffer []byte) ([]*IntermediaryDataCont
 					log.Error("[jti] found no matching optics iface")
 					return nil, fmt.Errorf("found no matching optics interface")
 				}
-			}
 
-			// == PORT ==
-			if proto.HasExtension(jns, port.E_JnprInterfaceExt) {
+			} else if proto.HasExtension(jns, port.E_JnprInterfaceExt) {
+				/*
+					PORT INTERFACE
+				*/
 				portIface, err := proto.GetExtension(jns, port.E_JnprInterfaceExt)
 				if err != nil {
 					log.WithError(err).Error("[jti] failed to get extension")
@@ -92,6 +95,13 @@ func (decoder *JuniperJTIDecoder) Decode(buffer []byte) ([]*IntermediaryDataCont
 					log.Error("[jti] found no matching port iface")
 					return nil, fmt.Errorf("found no matching port interface")
 				}
+			} else {
+				/*
+					UNKNOWN
+				*/
+				// TODO (etd): Figure out how to get an identifier for the extension to log.
+				// 	 It is not immediately intuitive how to do this.
+				log.Info("[jti] received message with extension not currently supported by the plugin")
 			}
 
 		default:
