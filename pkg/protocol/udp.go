@@ -3,6 +3,7 @@ package protocol
 import (
 	"net"
 	"strings"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 	cfg "github.com/vapor-ware/synse-juniper-jti-plugin/pkg/config"
@@ -178,6 +179,9 @@ func (server *JtiUDPServer) newDeviceFromInfo(info *jti.DeviceInfo) (*sdk.Device
 				"id": info.IDComponents,
 			},
 			Handler: "jti",
+			// Writes are not supported, but this timeout is set to silence semi-verbose SDK
+			// logs about using the default WriteTimeout when one is not explicitly set.
+			WriteTimeout: 10 * time.Second,
 		},
 		&config.DeviceInstance{
 			Info:    info.Info,
