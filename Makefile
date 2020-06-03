@@ -3,7 +3,7 @@
 #
 
 PLUGIN_NAME    := juniper-jti
-PLUGIN_VERSION := 0.1.0
+PLUGIN_VERSION := 0.1.1
 IMAGE_NAME     := vaporio/juniper-jti-plugin
 BIN_NAME       := synse-juniper-jti-plugin
 
