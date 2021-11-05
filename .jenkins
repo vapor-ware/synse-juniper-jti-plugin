@@ -12,5 +12,6 @@ golangPipeline([
   'image': 'vaporio/juniper-jti-plugin',
   'goVersion': '1.16',
   'skipSetup': true,
+  'skipUnitTest': true,
   'skipIntegrationTest': true,
 ])
