@@ -10,5 +10,7 @@ library identifier: 'vapor@1.19.7', retriever: modernSCM([
 
 golangPipeline([
   'image': 'vaporio/juniper-jti-plugin',
+  'goVersion': '1.16',
+  'skipSetup': true,
   'skipIntegrationTest': true,
 ])
