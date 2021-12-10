@@ -34,13 +34,11 @@ dockers:
   -
     goos: linux
     goarch: amd64
-    binaries:
-      - synse-juniper-jti-plugin
     image_templates:
-      - vaporio/juniper-jti-plugin:{{ .Tag }}
-      - vaporio/juniper-jti-plugin:{{ .Major }}
-      - vaporio/juniper-jti-plugin:{{ .Major }}.{{ .Minor }}
-      - vaporio/juniper-jti-plugin:latest
+      - docker.io/vaporio/juniper-jti-plugin:{{ .Tag }}
+      - docker.io/vaporio/juniper-jti-plugin:{{ .Major }}
+      - docker.io/vaporio/juniper-jti-plugin:{{ .Major }}.{{ .Minor }}
+      - docker.io/vaporio/juniper-jti-plugin:latest
     build_flag_templates:
       - "--label=org.label-schema.version={{ .Version }}"
       - "--label=org.label-schema.build-date={{ .Date }}"
